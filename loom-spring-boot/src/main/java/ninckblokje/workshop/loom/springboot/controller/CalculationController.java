@@ -26,17 +26,20 @@
 
 package ninckblokje.workshop.loom.springboot.controller;
 
+import jdk.incubator.concurrent.StructuredTaskScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.IntStream;
 
-@RestController("/calc")
+@RestController
+@RequestMapping("/calc")
 public class CalculationController {
 
     private static final Logger log = LoggerFactory.getLogger(CalculationController.class);
@@ -44,49 +47,66 @@ public class CalculationController {
     @GetMapping("/all")
     public Map<String, Object> getAll(
             @RequestParam(defaultValue = "2500") int endRange,
-            @RequestParam(defaultValue = "0") int sleepSeconds
-    ) {
+            @RequestParam(defaultValue = "10000000") long iterations
+    ) throws InterruptedException, ExecutionException {
 
-        return Map.of(
-                "pi", null,
-                "prime", primeNumbersTill(endRange, sleepSeconds).boxed().collect(Collectors.toList())
-        );
+        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
+            var piFuture = scope.fork(() -> calcPi(iterations));
+            var primeFuture = scope.fork(() -> primeNumbersTill(endRange));
+
+            scope.join();
+            scope.throwIfFailed();
+
+            return Map.of(
+                    "pi", piFuture.get(),
+                    "prime", primeFuture.get()
+            );
+        }
     }
 
     @GetMapping("/pi")
-    public void getPi(int noOfDecimals) {
-
+    public double getPi(@RequestParam(defaultValue = "10000000") long iterations) {
+        return calcPi(iterations);
     }
 
     @GetMapping("/prime")
     public IntStream getPrimeNumbers(
-            @RequestParam(defaultValue = "2500") int endRange,
-            @RequestParam(defaultValue = "0") int sleepSeconds
+            @RequestParam(defaultValue = "2500") int endRange
     ) {
-        return primeNumbersTill(endRange, sleepSeconds);
+        return primeNumbersTill(endRange);
     }
 
-    private IntStream primeNumbersTill(int endRange, int sleepSeconds) {
+    double calcPi(long iterations) {
         var msg = Thread.currentThread().isVirtual()
                 ? "Virtual thread %d: Starting".formatted(Thread.currentThread().threadId())
                 : "Thread %d: Starting".formatted(Thread.currentThread().threadId());
         log.info(msg);
 
-        try {
-            log.info("Sleeping for {} seconds", sleepSeconds);
-            Thread.sleep(sleepSeconds * 1_000L);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
+        double pi = 1;
+
+        log.info("Calculating pi for {} iterations", iterations);
+        for (long i = 3; i < iterations; i += 4) {
+            pi = pi - (1 / (double) i) + (1 / (double) (i + 2));
+            Thread.yield();
         }
+
+        return pi * 4;
+    }
+
+    boolean isPrime(int number) {
+        return IntStream.rangeClosed(2, (int) (Math.sqrt(number)))
+                .allMatch(n -> number % n != 0);
+    }
+
+    IntStream primeNumbersTill(int endRange) {
+        var msg = Thread.currentThread().isVirtual()
+                ? "Virtual thread %d: Starting".formatted(Thread.currentThread().threadId())
+                : "Thread %d: Starting".formatted(Thread.currentThread().threadId());
+        log.info(msg);
 
         log.info("Calculating prime numbers in range 2..{}", endRange);
         return IntStream.rangeClosed(2, endRange)
                 .filter(this::isPrime)
                 .peek(value -> Thread.yield());
-    }
-
-    private boolean isPrime(int number) {
-        return IntStream.rangeClosed(2, (int) (Math.sqrt(number)))
-                .allMatch(n -> number % n != 0);
     }
 }

@@ -65,13 +65,19 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>--enable-preview --add-modules jdk.incubator.concurrent</jvmArguments>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <parameters>true</parameters>
-                    <compilerArgument>--enable-preview</compilerArgument>
+                    <compilerArgs>
+                        <arg>--enable-preview</arg>
+                        <arg>--add-modules jdk.incubator.concurrent</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

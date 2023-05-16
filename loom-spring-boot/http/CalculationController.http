@@ -24,4 +24,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+GET http://localhost:8080/calc/pi
+
+###
+
 GET http://localhost:8080/calc/prime
+
+###
+
+GET http://localhost:8080/calc/all
