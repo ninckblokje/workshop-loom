@@ -39,9 +39,21 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>loom-spring-boot</name>
     <description>loom-spring-boot</description>
+
     <properties>
         <java.version>20</java.version>
+        <spring.profiles.active></spring.profiles.active>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>loom</id>
+            <properties>
+                <spring.profiles.active>loom</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -68,6 +80,30 @@
                 <configuration>
                     <jvmArguments>--enable-preview --add-modules jdk.incubator.concurrent</jvmArguments>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-jmeter</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <environmentVariables>
+                                <LOGGING_LEVEL_ROOT>warn</LOGGING_LEVEL_ROOT>
+                            </environmentVariables>
+                            <profiles>
+                                <profile>${spring.profiles.active}</profile>
+                            </profiles>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-jmeter</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -76,7 +112,8 @@
                     <parameters>true</parameters>
                     <compilerArgs>
                         <arg>--enable-preview</arg>
-                        <arg>--add-modules jdk.incubator.concurrent</arg>
+                        <arg>--add-modules</arg>
+                        <arg>jdk.incubator.concurrent</arg>
                     </compilerArgs>
                 </configuration>
             </plugin>

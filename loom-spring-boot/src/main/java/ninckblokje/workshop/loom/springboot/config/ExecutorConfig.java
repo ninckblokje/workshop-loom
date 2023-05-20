@@ -26,6 +26,8 @@
 
 package ninckblokje.workshop.loom.springboot.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatProtocolHandlerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +44,8 @@ import static org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfi
 @Configuration
 public class ExecutorConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(ExecutorConfig.class);
+
     private final Environment env;
 
     public ExecutorConfig(Environment env) {
@@ -49,12 +53,14 @@ public class ExecutorConfig {
     }
 
     private ThreadFactory osThreadFactory() {
+        log.info("Creating platform thread factory");
         return Thread.ofPlatform()
                 .name("osthread-", 0)
                 .factory();
     }
 
     private ThreadFactory virtualThreadFactory() {
+        log.info("Creating virtual thread factory");
         return Thread.ofVirtual()
                 .name("vthread-", 0)
                 .factory();
