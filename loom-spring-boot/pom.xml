@@ -36,23 +36,13 @@
     </parent>
     <groupId>ninckblokje.workshop.loom</groupId>
     <artifactId>loom-spring-boot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <name>loom-spring-boot</name>
     <description>loom-spring-boot</description>
 
     <properties>
         <java.version>20</java.version>
-        <spring.profiles.active></spring.profiles.active>
     </properties>
-
-    <profiles>
-        <profile>
-            <id>loom</id>
-            <properties>
-                <spring.profiles.active>loom</spring.profiles.active>
-            </properties>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>
@@ -91,9 +81,6 @@
                             <environmentVariables>
                                 <LOGGING_LEVEL_ROOT>warn</LOGGING_LEVEL_ROOT>
                             </environmentVariables>
-                            <profiles>
-                                <profile>${spring.profiles.active}</profile>
-                            </profiles>
                         </configuration>
                     </execution>
                     <execution>

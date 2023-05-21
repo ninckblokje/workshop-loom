@@ -24,63 +24,72 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package ninckblokje.workshop.loom.springboot.controller;
+package ninckblokje.workshop.loom.quarkus.resource;
 
-import jdk.incubator.concurrent.StructuredTaskScope;
-import ninckblokje.workshop.loom.springboot.service.CalculationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.smallrye.common.annotation.Blocking;
+import io.smallrye.common.annotation.RunOnVirtualThread;
+import io.smallrye.mutiny.Uni;
+import jakarta.ws.rs.*;
+import ninckblokje.workshop.loom.quarkus.service.CalculationService;
 
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.IntStream;
 
-@RestController
-@RequestMapping("/calc")
-public class CalculationController {
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
-    private static final Logger log = LoggerFactory.getLogger(CalculationController.class);
+@Path("/calc")
+public class CalculationResource {
 
     private final CalculationService service;
 
-    public CalculationController(CalculationService service) {
+    public CalculationResource(CalculationService service) {
         this.service = service;
     }
 
-    @GetMapping("/all")
-    public Map<String, Object> getAll(
-            @RequestParam(defaultValue = "2500") int endRange,
-            @RequestParam(defaultValue = "10000000") long iterations
-    ) throws InterruptedException, ExecutionException {
+    @GET
+    @Path("/all")
+    @Produces(APPLICATION_JSON)
+    public Uni<Map<String, Object>> getAll(
+            @QueryParam("endRange") @DefaultValue("2500") int endRange,
+            @QueryParam("iterations") @DefaultValue("10000000") long iterations
+    ) {
+        var calcPiUni = Uni.createFrom()
+                .item(service.calcPi(iterations));
+        var primeNumbersTillUni = Uni.createFrom()
+                .item(service.primeNumbersTill(endRange));
 
-        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            var piFuture = scope.fork(() -> service.calcPi(iterations));
-            var primeFuture = scope.fork(() -> service.primeNumbersTill(endRange));
-
-            scope.join();
-            scope.throwIfFailed();
-
-            return Map.of(
-                    "pi", piFuture.get(),
-                    "prime", primeFuture.get()
-            );
-        }
+        return Uni.combine().all()
+                .unis(calcPiUni, primeNumbersTillUni)
+                .combinedWith(this::combineResults);
     }
 
-    @GetMapping("/pi")
-    public double getPi(@RequestParam(defaultValue = "10000000") long iterations) {
+    Map<String, Object> combineResults(List<?> objects) {
+        var pi = objects.get(0);
+        var primeNumbers = objects.get(1);
+
+        return Map.of(
+                "pi", pi,
+                "prime", primeNumbers
+        );
+    }
+
+    @GET
+    @Path("/pi")
+    @Blocking
+    @RunOnVirtualThread
+    public double getPi(@QueryParam("iterations") @DefaultValue("10000000") long iterations) {
         return service.calcPi(iterations);
     }
 
-    @GetMapping("/prime")
+    @GET
+    @Path("/prime")
+    @Produces(APPLICATION_JSON)
+    @Blocking
+    @RunOnVirtualThread
     public IntStream getPrimeNumbers(
-            @RequestParam(defaultValue = "2500") int endRange
+            @QueryParam("endRange") @DefaultValue("2500") int endRange
     ) {
         return service.primeNumbersTill(endRange);
     }
-
 }

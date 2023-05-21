@@ -31,11 +31,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatProtocolHandlerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.core.task.support.TaskExecutorAdapter;
 
-import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
@@ -46,19 +44,6 @@ public class ExecutorConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ExecutorConfig.class);
 
-    private final Environment env;
-
-    public ExecutorConfig(Environment env) {
-        this.env = env;
-    }
-
-    private ThreadFactory osThreadFactory() {
-        log.info("Creating platform thread factory");
-        return Thread.ofPlatform()
-                .name("osthread-", 0)
-                .factory();
-    }
-
     private ThreadFactory virtualThreadFactory() {
         log.info("Creating virtual thread factory");
         return Thread.ofVirtual()
@@ -66,26 +51,17 @@ public class ExecutorConfig {
                 .factory();
     }
 
-    private ThreadFactory threadFactory() {
-        var activeProfiles = Arrays.asList(env.getActiveProfiles());
-        if (activeProfiles.contains("loom")) {
-            return virtualThreadFactory();
-        } else {
-            return osThreadFactory();
-        }
-    }
-
     @Bean(APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor asyncTaskExecutor() {
         return new TaskExecutorAdapter(
-                Executors.newThreadPerTaskExecutor(threadFactory())
+                Executors.newThreadPerTaskExecutor(virtualThreadFactory())
         );
     }
 
     @Bean
     public TomcatProtocolHandlerCustomizer<?> tomcatProtocolHandlerCustomizer() {
         return protocolHandler -> protocolHandler.setExecutor(
-                Executors.newThreadPerTaskExecutor(threadFactory())
+                Executors.newThreadPerTaskExecutor(virtualThreadFactory())
         );
     }
 }
