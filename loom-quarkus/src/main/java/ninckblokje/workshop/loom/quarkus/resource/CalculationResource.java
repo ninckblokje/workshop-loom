@@ -27,7 +27,6 @@
 package ninckblokje.workshop.loom.quarkus.resource;
 
 import io.smallrye.common.annotation.Blocking;
-import io.smallrye.common.annotation.RunOnVirtualThread;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.*;
 import ninckblokje.workshop.loom.quarkus.service.CalculationService;
@@ -77,19 +76,23 @@ public class CalculationResource {
     @GET
     @Path("/pi")
     @Blocking
-    @RunOnVirtualThread
-    public double getPi(@QueryParam("iterations") @DefaultValue("10000000") long iterations) {
-        return service.calcPi(iterations);
+    public Uni<Double> getPi(@QueryParam("iterations") @DefaultValue("10000000") long iterations) {
+        var calcPiUni = Uni.createFrom()
+            .item(service.calcPi(iterations));
+
+        return calcPiUni;
     }
 
     @GET
     @Path("/prime")
     @Produces(APPLICATION_JSON)
     @Blocking
-    @RunOnVirtualThread
-    public IntStream getPrimeNumbers(
+    public Uni<IntStream> getPrimeNumbers(
             @QueryParam("endRange") @DefaultValue("2500") int endRange
     ) {
-        return service.primeNumbersTill(endRange);
+        var primeNumbersTillUni = Uni.createFrom()
+                .item(service.primeNumbersTill(endRange));
+
+        return primeNumbersTillUni;
     }
 }
