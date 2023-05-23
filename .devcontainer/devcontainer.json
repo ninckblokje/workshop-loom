@@ -13,12 +13,23 @@
 		}
 	},
 
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"vmware.vscode-boot-dev-pack",
+				"redhat.vscode-quarkus",
+				"anweber.vscode-httpyac"
+			]
+		}
+	},
+
 	"containerEnv": {
 		"JAVA_HOME": "/opt/java/openjdk"
-	}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [ 8080 ]
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",
