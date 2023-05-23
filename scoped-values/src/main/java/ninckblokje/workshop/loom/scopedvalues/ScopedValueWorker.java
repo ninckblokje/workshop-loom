@@ -26,20 +26,17 @@
 
 package ninckblokje.workshop.loom.scopedvalues;
 
-import jdk.incubator.concurrent.ScopedValue;
 import jdk.incubator.concurrent.StructuredTaskScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
 
-import static ninckblokje.workshop.loom.scopedvalues.ThreadLocalWorker.CTX;
-
 public class ScopedValueWorker {
 
     private static final Logger log = LoggerFactory.getLogger(ScopedValueWorker.class);
 
-    public static final ScopedValue<Context> CTX = ScopedValue.newInstance();
+    public static final ThreadLocal<Context> CTX = new InheritableThreadLocal<>();
 
     public void doWork() {
         log.info("Do work for user {}", CTX.get().userId());

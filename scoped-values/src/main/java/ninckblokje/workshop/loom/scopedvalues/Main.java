@@ -38,12 +38,12 @@ public class Main {
     }
 
     static void mainWithScopedValues() {
-        var worker = new ScopedValueWorker();
+        // var worker = new ScopedValueWorker();
 
-        try (var executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().name("pthread-", 20).factory())) {
-            executor.submit(() -> ScopedValue.where(ScopedValueWorker.CTX, new Context("12")).run(worker::doWork));
-            executor.submit(() -> ScopedValue.where(ScopedValueWorker.CTX, new Context("34")).run(worker::doWork));
-        }
+        // try (var executor = Executors.newThreadPerTaskExecutor(Thread.ofPlatform().name("pthread-", 20).factory())) {
+        //     executor.submit(() -> ScopedValue.where(ScopedValueWorker.CTX, new Context("12")).run(worker::doWork));
+        //     executor.submit(() -> ScopedValue.where(ScopedValueWorker.CTX, new Context("34")).run(worker::doWork));
+        // }
     }
 
     static void mainWithThreadLocals() {

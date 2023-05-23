@@ -26,10 +26,11 @@
 
 package ninckblokje.workshop.loom.scopedvalues;
 
+import java.time.Duration;
+import java.util.random.RandomGenerator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.time.Duration;
 
 import static ninckblokje.workshop.loom.scopedvalues.ScopedValueWorker.CTX;
 
@@ -52,7 +53,7 @@ public class ScopedValueSubTask implements SubTask {
         log.info("Done doing subtask for user {}", userId);
 
         log.info("Old value for context: {}", CTX.get());
-        // CTX.set(new Context("Dummy %d".formatted(RandomGenerator.getDefault().nextInt(0, 2))));
+        CTX.set(new Context("Dummy %d".formatted(RandomGenerator.getDefault().nextInt(0, 2))));
         log.info("New value for context: {}", CTX.get());
 
         return (reverse) ? userId : new StringBuilder(userId).reverse().toString();
