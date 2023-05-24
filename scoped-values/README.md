@@ -7,9 +7,9 @@ The worker instance starts the process and forks multiple threads for sub tasks.
 In this assignment the same setup is going to be replicated using `ScopedValue` instead of `ThreadLocal`. In both cases structured concurrency is used in the sub task to fork the threads.
 
 - Execute the program
-- In the class `ScopedValueWorker`:
+- In the class [ScopedValueWorker](src/main/java/ninckblokje/workshop/loom/scopedvalues/ScopedValueWorker.java):
   - Change the variable `CTX` to be of type `ScopedValue<Context>` and init it
-- In the class `Main`:
+- In the class [Main](src/main/java/ninckblokje/workshop/loom/scopedvalues/Main.java):
   - Remove the comments in the method `mainWithScopedValues` so that the commented out code will be executed
 - Execute the program and fix the compilation error
 - Execute the program again
