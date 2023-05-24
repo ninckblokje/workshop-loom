@@ -26,7 +26,7 @@
 
 package ninckblokje.workshop.loom.springboot.controller;
 
-import jdk.incubator.concurrent.StructuredTaskScope;
+import ninckblokje.workshop.loom.springboot.service.AsyncCalculationService;
 import ninckblokje.workshop.loom.springboot.service.CalculationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +45,12 @@ public class CalculationController {
 
     private static final Logger log = LoggerFactory.getLogger(CalculationController.class);
 
+    private final AsyncCalculationService asyncService;
     private final CalculationService service;
 
-    public CalculationController(CalculationService service) {
+    public CalculationController(CalculationService service, AsyncCalculationService asyncService) {
         this.service = service;
+        this.asyncService = asyncService;
     }
 
     @GetMapping("/all")
@@ -56,19 +58,14 @@ public class CalculationController {
             @RequestParam(defaultValue = "2500") int endRange,
             @RequestParam(defaultValue = "10000000") long iterations
     ) throws InterruptedException, ExecutionException {
+        
+        var piFuture = asyncService.calcPi(iterations);
+        var primeFuture = asyncService.primeNumbersTill(endRange);
 
-        try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
-            var piFuture = scope.fork(() -> service.calcPi(iterations));
-            var primeFuture = scope.fork(() -> service.primeNumbersTill(endRange));
-
-            scope.join();
-            scope.throwIfFailed();
-
-            return Map.of(
-                    "pi", piFuture.get(),
-                    "prime", primeFuture.get()
-            );
-        }
+        return Map.of(
+            "pi", piFuture.get(),
+            "prime", primeFuture.get()
+        );
     }
 
     @GetMapping("/pi")

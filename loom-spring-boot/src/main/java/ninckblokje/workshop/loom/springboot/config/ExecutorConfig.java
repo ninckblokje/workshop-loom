@@ -44,24 +44,24 @@ public class ExecutorConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ExecutorConfig.class);
 
-    private ThreadFactory virtualThreadFactory() {
-        log.info("Creating virtual thread factory");
-        return Thread.ofVirtual()
-                .name("vthread-", 0)
+    private ThreadFactory platformThreadFactory() {
+        log.info("Creating platform thread factory");
+        return Thread.ofPlatform()
+                .name("pthread-", 0)
                 .factory();
     }
 
     @Bean(APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor asyncTaskExecutor() {
         return new TaskExecutorAdapter(
-                Executors.newThreadPerTaskExecutor(virtualThreadFactory())
+                Executors.newThreadPerTaskExecutor(platformThreadFactory())
         );
     }
 
     @Bean
     public TomcatProtocolHandlerCustomizer<?> tomcatProtocolHandlerCustomizer() {
         return protocolHandler -> protocolHandler.setExecutor(
-                Executors.newThreadPerTaskExecutor(virtualThreadFactory())
+                Executors.newThreadPerTaskExecutor(platformThreadFactory())
         );
     }
 }

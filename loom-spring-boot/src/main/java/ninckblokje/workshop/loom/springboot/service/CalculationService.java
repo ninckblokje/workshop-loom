@@ -48,7 +48,6 @@ public class CalculationService {
         log.info("Calculating pi for {} iterations", iterations);
         for (long i = 3; i < iterations; i += 4) {
             pi = pi - (1 / (double) i) + (1 / (double) (i + 2));
-            Thread.yield();
         }
 
         return pi * 4;
@@ -67,7 +66,6 @@ public class CalculationService {
 
         log.info("Calculating prime numbers in range 2..{}", endRange);
         return IntStream.rangeClosed(2, endRange)
-                .filter(this::isPrime)
-                .peek(value -> Thread.yield());
+                .filter(this::isPrime);
     }
 }
