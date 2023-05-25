@@ -48,7 +48,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
         <configuration>
-          <mainClass>ninckblokje.workshop.loom.ThreadPinning</mainClass>
+          <mainClass>ninckblokje.workshop.loom.Main</mainClass>
         </configuration>
       </plugin>
     </plugins>
