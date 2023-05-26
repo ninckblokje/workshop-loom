@@ -1,6 +1,6 @@
 # workshop-loom
 
-In this repository the assignments for the SynTouch Loom workshop can be found. Loom is the name of the OpenJDK project for bringing virtual threads into the JVM. More information can be found here: https://openjdk.org/projects/loom/
+In this repository the assignments for the SynTouch Loom workshop (by Qun Wang and Jeroen Ninck Blok) can be found. Loom is the name of the OpenJDK project for bringing virtual threads into the JVM. More information can be found here: https://openjdk.org/projects/loom/
 
 Project Loom is implemented using these JEP's:
 
@@ -24,14 +24,14 @@ This project can either be run locally or using a devcontainer.
 
 ### Local
 
-- Download & install JDK 20
-- Download & install IntelliJ
+- Download & install [JDK 20](https://adoptium.net/temurin/releases/)
+- Download & install [IntelliJ](https://www.jetbrains.com/idea/)
 - Configure JDK 20 in IntelliJ
 
 ## Devcontainer
 
-- Install Visual Studio Code
-- Install Docker
+- Install [Visual Studio Code](https://code.visualstudio.com/) with [Remote Development Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+- Install [Docker](https://www.docker.com/)
 - Open the repository in Visual Studio Code and start the devcontainer
 
 ## Assignments
