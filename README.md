@@ -39,8 +39,9 @@ This project can either be run locally or using a devcontainer.
 There are three assignments which show the capabilities (and API's) of virtual threads, structured concurrency and scoped values.
 
 1. [loom-spring-boot](loom-spring-boot/README.md): Implement virtual threads and structured concurrency in a Spring Boot 3.0 application
-2. [scoped-values](scoped-values/README.md): Implement scoped values (next the `ThreadLocal`) in a regular Java app
-3. [loom-quarkus](loom-quarkus/README.md): Use the Quarkus virtual thread API
+1. [thread-pinning](thread-pinning/README.md): Thread pinning using synchronized code
+1. [scoped-values](scoped-values/README.md): Implement scoped values (next the `ThreadLocal`) in a regular Java app
+1. [loom-quarkus](loom-quarkus/README.md): Use the Quarkus virtual thread API
 
 ## Tips & trics
 

@@ -21,7 +21,7 @@ When `useShower()` is called, java sees the `synchronized` keyword and will pin 
         }
 ````
 
-- Build the project `mvn clean install`
+- Build the project `mvn clean verify`
 - Run the application `mvn exec:java`
 - Try removing the `synchronized` keyword and rerun the application. Anything you notice?
 
