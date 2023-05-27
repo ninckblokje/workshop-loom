@@ -132,6 +132,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <generateReports>true</generateReports>
+                </configuration>
             </plugin>
         </plugins>
     </build>

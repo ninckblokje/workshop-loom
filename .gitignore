@@ -1,2 +1,4 @@
 .idea/
 target/
+performance-reports/
+jmeter.log

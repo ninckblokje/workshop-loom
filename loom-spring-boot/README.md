@@ -7,11 +7,13 @@ This Spring Boot application does some CPU intensive calculations in three REST 
 
 The application uses platform threads. When you run the `verify` stage a JMeter tests (which can be found in the [jmeter](src/test/jmeter/) folder).
 
-- Run the Maven command `verify` and save the output (note a CSV is also generated)
+- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
-- Test the operations using the HTTP requests from the [http](http/) folder
+- Test the operations using the HTTP requests from the [http](http) folder
   - Notice the thread name in the logging
 - Stop the application
+
+## Virtual threads
 
 First we need to make Spring Boot use virtual threads instead of platform threads:
 
@@ -27,21 +29,13 @@ First we need to make Spring Boot use virtual threads instead of platform thread
 ````
 
 - In the methods `asyncTaskExecutor` and `tomcatProtocolHandlerCustomizer` call the new factory method
-- Run the Maven command `verify` and save the output (note a CSV is also generated)
+- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
 - Test the operations using the HTTP requests from the [http](http/) folder
   - Notice the thread name in the logging
 - Stop the application
 
-The calculations in the [CalculationService](src/main/java/ninckblokje/workshop/loom/springboot/service/CalculationService.java) will block the CPU and therefor the thread for the duration of the calculation. We can make our calculations more friendly by allowing other threads to also take CPU time. This can be done using the method `Thread.yield`.
-
-- In the method `calcPi` change the for loop to after each iteration call `Thread.yield()`
-- In the method `primeNumbersTill` change the stream to call `Thread.yield()` after the filter in a `peek` call
-- Run the Maven command `verify` and save the output (note a CSV is also generated)
-- Start the application manually
-- Test the operations using the HTTP requests from the [http](http/) folder
-  - Notice the thread name in the logging
-- Stop the application
+## Structured concurrency
 
 The class [AsyncCalculationService](src/main/java/ninckblokje/workshop/loom/springboot/service/AsyncCalculationService.java) is a wrapper class around [CalculationService](src/main/java/ninckblokje/workshop/loom/springboot/service/CalculationService.java). It makes the methods asynchronous (using Spring's `@Async`) and returns a `CompletableFuture`. This can be replaced with structured concurrency
 
@@ -70,7 +64,19 @@ The class [AsyncCalculationService](src/main/java/ninckblokje/workshop/loom/spri
     }
 ````
 
-- Run the Maven command `verify` and save the output (note a CSV is also generated)
+- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
+- Start the application manually
+- Test the operations using the HTTP requests from the [http](http/) folder
+  - Notice the thread name in the logging
+- Stop the application
+
+## Yielding
+
+The calculations in the [CalculationService](src/main/java/ninckblokje/workshop/loom/springboot/service/CalculationService.java) will block the CPU and therefor the thread for the duration of the calculation. We can make our calculations more friendly by allowing other threads to also take CPU time. This can be done using the method `Thread.yield`.
+
+- In the method `calcPi` change the for loop to after each iteration call `Thread.yield()`
+- In the method `primeNumbersTill` change the stream to call `Thread.yield()` after the filter in a `peek` call
+- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
 - Test the operations using the HTTP requests from the [http](http/) folder
   - Notice the thread name in the logging
