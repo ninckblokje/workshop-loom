@@ -7,10 +7,11 @@ This Spring Boot application does some CPU intensive calculations in three REST 
 
 The application uses platform threads. When you run the `verify` stage a JMeter tests (which can be found in the [jmeter](src/test/jmeter/) folder).
 
-- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
+- Run the Maven command `clean verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
 - Test the operations using the HTTP requests from the [http](http) folder
   - Notice the thread name in the logging
+![Thread name in logging](assets/threadname.png)
 - Stop the application
 
 ## Virtual threads
@@ -29,7 +30,7 @@ First we need to make Spring Boot use virtual threads instead of platform thread
 ````
 
 - In the methods `asyncTaskExecutor` and `tomcatProtocolHandlerCustomizer` call the new factory method
-- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
+- Run the Maven command `clean verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
 - Test the operations using the HTTP requests from the [http](http/) folder
   - Notice the thread name in the logging
@@ -64,7 +65,7 @@ The class [AsyncCalculationService](src/main/java/ninckblokje/workshop/loom/spri
     }
 ````
 
-- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
+- Run the Maven command `clean verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
 - Test the operations using the HTTP requests from the [http](http/) folder
   - Notice the thread name in the logging
@@ -76,8 +77,14 @@ The calculations in the [CalculationService](src/main/java/ninckblokje/workshop/
 
 - In the method `calcPi` change the for loop to after each iteration call `Thread.yield()`
 - In the method `primeNumbersTill` change the stream to call `Thread.yield()` after the filter in a `peek` call
-- Run the Maven command `verify` and save the [results](target/jmeter/results) folder
+- Run the Maven command `clean verify` and save the [results](target/jmeter/results) folder
 - Start the application manually
 - Test the operations using the HTTP requests from the [http](http/) folder
   - Notice the thread name in the logging
 - Stop the application
+
+## Performance
+
+If you have saved the folders [results](target/jmeter/results) for each of the steps you can compare the performance by opening the file `index.html` in the subdirectory `reports`.
+
+Has the performance improved?
