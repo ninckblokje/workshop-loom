@@ -16,8 +16,6 @@ Virtual threads bring two more new features to the JVM:
 - Structured concurrency
 - Scoped values
 
-The branch `solution` contains working solutions for all assignments
-
 ## Prerequisites
 
 This project can either be run locally or using a devcontainer.
@@ -38,6 +36,7 @@ This project can either be run locally or using a devcontainer.
 
 There are three assignments which show the capabilities (and API's) of virtual threads, structured concurrency and scoped values.
 
+1. [loom-http-client](loom-http-client/README.md): Simple HTTP client used with virtual threads
 1. [loom-spring-boot](loom-spring-boot/README.md): Implement virtual threads and structured concurrency in a Spring Boot 3.0 application
 1. [thread-pinning](thread-pinning/README.md): Thread pinning using synchronized code
 1. [scoped-values](scoped-values/README.md): Implement scoped values (next the `ThreadLocal`) in a regular Java app
