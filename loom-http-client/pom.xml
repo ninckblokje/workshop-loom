@@ -29,11 +29,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ninckblokje.workshop.loom</groupId>
-  <artifactId>scoped-values</artifactId>
+  <artifactId>loom-http-client</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>scoped-values</name>
+  <name>loom-http-client</name>
 
   <properties>
     <maven.compiler.source>20</maven.compiler.source>
